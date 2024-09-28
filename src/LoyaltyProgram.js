@@ -2,16 +2,12 @@
 import React, { useState } from 'react'
 import Web3 from 'web3'
 import './loyalty.css' // Import CSS file
-import {
-  createPublicClient,
-  createWalletClient,
-  custom,
-  formatEther,
-  http,
-} from 'viem'
+import { SwisstronikPlugin } from '@swisstronik/web3-plugin-swisstronik'
+
+require('dotenv').config()
 
 // Replace with your deployed token contract address
-const TOKEN_CONTRACT_ADDRESS = '0xYourTokenContractAddress' // Replace with your deployed token contract address
+const TOKEN_CONTRACT_ADDRESS = '0x1F8d0A1f88C38BDbb5EdADD876c6bE6055d723C6' // Replace with your deployed token contract address
 
 const LoyaltyProgram = () => {
   const [amount, setAmount] = useState('')
@@ -22,7 +18,14 @@ const LoyaltyProgram = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   // Initialize Web3
-  const web3 = new Web3(window.ethereum)
+  const web3 = new Web3('https://json-rpc.testnet.swisstronik.com/') // Any RPC node you wanted to connect with
+  web3.registerPlugin(new SwisstronikPlugin())
+
+  let wallet = web3.eth.accounts.wallet.add(`0x${process.env.PRIVATE_KEY}`); // Private Key process.env.PRIVATE_KEY); // Private Key
+  
+//   web3.swisstronik.getNodePublicKey().then((resp) => {
+//     console.log(resp)
+//   })
 
   const connectWallet = async () => {
     if (window.ethereum) {
