@@ -1,4 +1,9 @@
 # Getting Started with Create React App
+### Link
+
+You can open the Dapp functionality here.
+Open [Loyalty Rewards to hacker Participants](https://miniature-death-petite.on-fleek.app/) to view the dapp in your browser.
+
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
