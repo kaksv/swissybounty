@@ -2,13 +2,12 @@
 import React, { useState } from 'react'
 import Web3 from 'web3'
 import './loyalty.css' // Import CSS file
-//2. import swisstronik plugin
-import { SwisstronikPlugin } from '@swisstronik/web3-plugin-swisstronik'
-//3. import ABI of counter contract
-import ABI from './abi.mjs'
+// import { SwisstronikPlugin } from '@swisstronik/web3-plugin-swisstronik'
+
+require('dotenv').config()
 
 // Replace with your deployed token contract address
-const TOKEN_CONTRACT_ADDRESS = '0x4a30eFBCC84E37FaaA5bC90d38a8F75e3CFf2F9c' // Replace with your deployed token contract address
+const TOKEN_CONTRACT_ADDRESS = '0x1F8d0A1f88C38BDbb5EdADD876c6bE6055d723C6' // Replace with your deployed token contract address
 
 const LoyaltyProgram = () => {
   const [amount, setAmount] = useState('')
@@ -19,33 +18,24 @@ const LoyaltyProgram = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   // Initialize Web3
-  const web3 = new Web3(window.ethereum)
+  // const web3 = new Web3('https://json-rpc.testnet.swisstronik.com/') // Any RPC node you wanted to connect with
+  // web3.registerPlugin(new SwisstronikPlugin())
 
-  //5. register swisstronik plugin
-  web3.registerPlugin(
-    new SwisstronikPlugin('https://json-rpc.testnet.swisstronik.com')
-  )
+  // let wallet = web3.eth.accounts.wallet.add(`0x${process.env.PRIVATE_KEY}`) // Private Key process.env.PRIVATE_KEY); // Private Key
+  // let wallet2 = web3.eth.accounts.wallet.add(
+  //   'b8808ab5d86222e811bc3eabb715d51a3a0159f699e864df288a95c1e1679002'
+  // ) // Private Key process.env.PRIVATE_KEY); // Private Key
+  //   web3.swisstronik.getNodePublicKey().then((resp) => {
+  //     console.log(resp)
+  //   })
 
-  //6. initialize contract
-  const contract = new web3.eth.Contract(
-    ABI,
-    // '0x1F8d0A1f88C387931BDbb5EdADD876c6bE6055d723C6'
-    '0x4a30eFBCC84E37FaaA5bC90d38a8F75e3CFf2F9c'
-  )
   const connectWallet = async () => {
     if (window.ethereum) {
       try {
         // Request account access
-        //Request account access
-        const accounts = await web3.eth.requestAccounts()
-
-        let chainID = await web3.eth.getChainId()
-        // console.log('user sss :', chainID)
-
-        if (Number(chainID) !== 1291) {
-          alert('Please connect to the Swisstonik Testnet in your metamask')
-        }
-
+        const accounts = await window.ethereum.request({
+          method: 'eth_requestAccounts',
+        })
         setAccount(accounts[0])
         setErrorMessage('')
       } catch (error) {
@@ -137,7 +127,7 @@ const LoyaltyProgram = () => {
         />
       </div>
       <div className="form-group">
-        <label>Reward Amount (in SWB):</label>
+        <label>Reward Amount (in ETH):</label>
         <input
           type="number"
           value={amount}
@@ -147,7 +137,7 @@ const LoyaltyProgram = () => {
         />
       </div>
       <button className="reward-button" onClick={handleReward}>
-        Reward Customer
+        Reward Participant.
       </button>
       {transactionHash && (
         <p className="success-message">Transaction Hash: {transactionHash}</p>
@@ -155,6 +145,14 @@ const LoyaltyProgram = () => {
       {errorMessage && <p className="error-message">{errorMessage}</p>}
     </div>
   )
+}
+
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+
+module.exports = function override(config, env) {
+  config.plugins.push(new NodePolyfillPlugin());
+
+  return config;
 }
 
 export default LoyaltyProgram
